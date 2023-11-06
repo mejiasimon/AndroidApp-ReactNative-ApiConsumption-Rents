@@ -1,9 +1,22 @@
-import {Text,View,Image,Button} from "react-native-paper"
+import {Text,Button,TextInput} from "react-native-paper"
+import { Icon } from "@mui/material";
+import { View,Image } from "react-native";
 import {Controller,useForm}from "react-hook-form"
 import { styles } from "../styles/styles";
 import { useState } from "react";
-export function SigIn(){
-    const [Password,setPassword]=useState(tue)
+export function SigIn({navigation}){
+
+function HandleRegister(){
+  navigation.navigate("Register")
+}
+
+  function HandlePassword(){
+    navigation.navigate("ForgotPassword")
+  }
+  function HandlesignIn(){
+    navigation.navigate("CreateCar")
+  }
+    const [Password,setPassword]=useState(true)
     const {
         control,
         handleSubmit,
@@ -17,6 +30,18 @@ export function SigIn(){
       });
 return(
 <View style={styles.container} >
+  <Image 
+  style={
+    {
+      height:150,
+      width:150
+    }
+  }
+  source={{
+    uri:"https://firebasestorage.googleapis.com/v0/b/renting-63833.appspot.com/o/acceso.png?alt=media&token=795d8c69-7763-45e3-88d6-0a77cd5bc41d"
+  }}>
+    
+  </Image>
 <Controller
         control={control}
         rules={{
@@ -27,7 +52,7 @@ return(
           <TextInput
             autoFocus
             label="User"
-            right={<TextInput.Icon icon="person" />}
+            right={<TextInput.Icon icon="user" />}
             onChangeText={onChange}
             value={value}
           ></TextInput>
@@ -47,10 +72,11 @@ return(
           required: true,
           minLength:6,
           maxLength:12,
-          pattern:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{3,}$/,
+          pattern:/[@!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
         }}
         render={({ field: { onChange, value } }) => (
           <TextInput
+          style={styles.textInput}
             autoFocus
             label="Password"
             secureTextEntry={!Password}
@@ -75,12 +101,24 @@ return(
         <Text style={{ color: "red" }}>tu contraseña debe tener almenos un signo especial
         </Text>
       )}
-        <Button
+      <View style={styles.containerButtons}>
+      <Button
           label="SignIn"
           style={styles.button}
-          icon="login"
-          onPress={handleSubmit()}
-        ></Button>
+          onPress={handleSubmit(HandlesignIn)}
+        >SigIn</Button>
+         <Button
+          label="Register"
+          style={styles.button}
+          onPress={HandleRegister}
+        >Register</Button>
+      </View>
+      <Button
+          label="Forgot your password?"
+          style={styles.button}
+          onPress={HandlePassword}
+        >Forgot your Password?</Button>
+
 </View>
 )
 }
