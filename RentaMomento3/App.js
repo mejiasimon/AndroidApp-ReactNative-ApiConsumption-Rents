@@ -7,6 +7,8 @@ import { Register } from "./components/Register";
 import { Rent } from "./components/Rent";
 import { ReturnCar } from "./components/ReturnCar";
 import { SigIn } from "./components/SignIn";
+import { Delete } from "./components/Delete";
+import { ListCarsRent } from "./components/ListCarsRent";
 const stack=createStackNavigator()
 export default function App() {
 return(
@@ -19,6 +21,8 @@ return(
 <stack.Screen name="Register" component={Register}></stack.Screen>
 <stack.Screen name="Rent" component={Rent}></stack.Screen>
 <stack.Screen name="ReturnCar" component={ReturnCar}></stack.Screen>
+<stack.Screen name="Delete" component={Delete}></stack.Screen>
+<stack.Screen name="ListCarsRent" component={ListCarsRent}></stack.Screen>
 </stack.Navigator>
 </NavigationContainer>
 )

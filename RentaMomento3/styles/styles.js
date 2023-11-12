@@ -15,7 +15,7 @@ button:{
     color:"white",
     marginTop:"20px",
     marginLeft:"5px",
-    marginRight:"5px"
+    marginRight:"5px",
 },
 textInput:{
 marginTop:"20px"
@@ -25,7 +25,14 @@ marginTop:"20px"
     alignItems:"center",
     backgroundColor:"black",
     flexWrap:"nowrap"
-    },
+    },  carroItem: {
+
+        backgroundColor:"purple",
+        borderRadius:"10px",
+        borderWidth: 1,
+        padding: 10,
+        marginBottom: 10,}
+    
 
 
 })

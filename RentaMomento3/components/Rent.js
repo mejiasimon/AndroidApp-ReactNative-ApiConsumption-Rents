@@ -3,14 +3,36 @@ import { Icon } from "@mui/material";
 import { View,Image,select } from "react-native";
 import {Controller,useForm}from "react-hook-form"
 import { styles } from "../styles/styles";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { GetCars } from "../services/GetCars";
+import RNPickerSelect from 'react-native-picker-select';
 
 export function Rent({navigation}){
-    function HandleListVehicles(){
 
+
+  const [data,setdata]=useState([])
+  async function fetchdata(){
+    try {
+        let datos=await GetCars()
+        let filtro=datos.filter(({platenumber,brand,state,dailyvalue})=>{return state==1})
+        setdata(filtro)
+    }catch(error){
+console.log(error)
+    }
+}
+useEffect(()=>{
+    fetchdata()
+},[])
+console.log(data)
+    function HandleListVehicles(){
+navigation.navigate("ListCarsRent")
     }
     function HandleReturnVehicles(){
         
+    }
+    async function HandleRent(data){
+      console.log(data)
+
     }
     const[color,setColor]=useState("")
     const[text,setText]=useState("")
@@ -18,6 +40,7 @@ export function Rent({navigation}){
         control,
         handleSubmit,
         register,
+        setValue,
         reset,
         formState: { errors },
       } = useForm({
@@ -27,6 +50,7 @@ export function Rent({navigation}){
          FinalDate:""
         },
       });
+
       return(
         <View style={styles.container} >
   <Image 
@@ -43,19 +67,28 @@ export function Rent({navigation}){
   </Image>
   <Text style={{color:"white",fontSize:"20px",marginBottom:"20px"}}>Select Vehicle</Text>
 
-<select style={{width:"268px",height:"50px",marginBottom:"20px",borderRadius:"5px"}} 
-    {...register("Vehicle",{required:true})}>
-    //codigo de listado de disp
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
-       {errors.Vehicle?.type == "required" && (
-        <Text style={{ color: "red" }}>Debes seleccionar un vehiculo</Text>
+  <Controller
+ rules={{
+  required: true,
+}}
+        control={control}
+        render={({ field }) => (
+          <RNPickerSelect
+          style={{width:"268px",height:"50px",marginBottom:"20px",borderRadius:"5px"}}
+            onValueChange={(value) => setValue('Vehicle', value)}
+            items={data.map((opcion) => ({
+              label: opcion.platenumber,
+              value: opcion.platenumber,
+            }))}
+            value={field.value}
+          />
+        )}
+        name="Vehicle"
+        defaultValue={null}
+      />
+      {errors.Vehicle?.type == "required" && (
+        <Text style={{ color: "red" }}>Debes seleccionar el vehiculo</Text>
       )}
-
-
-
 
 <Controller
         control={control}
@@ -77,7 +110,7 @@ export function Rent({navigation}){
  {errors.InitialDate?.type == "required" && (
         <Text style={{ color: "red" }}>Debes ingresar la fecha inicial</Text>
       )}
-       {errors.InitialDate?.type == "Pattern" && (
+       {errors.InitialDate?.type == "pattern" && (
         <Text style={{ color: "red" }}>Debes ingresar una fecha valida formato : YYYY-MM-DD</Text>
       )}
 
@@ -113,8 +146,8 @@ export function Rent({navigation}){
 <Button
           label="Rent Vehicle"
           style={styles.button}
-          onPress={handleSubmit()}
-        >Store vehicle</Button>
+          onPress={handleSubmit(HandleRent)}
+        >Rent</Button>
          <Button
           label="List Vehicles"
           style={styles.button}

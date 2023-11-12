@@ -4,8 +4,11 @@ import { View,Image } from "react-native";
 import {Controller,useForm}from "react-hook-form"
 import { styles } from "../styles/styles";
 import { useState } from "react";
+import { GetUsers } from "../services/GetUsers";
+import { FilterOutlined } from "@mui/icons-material";
 export function SigIn({navigation}){
-
+  const[color,setColor]=useState("")
+  const[text,setText]=useState("")
 function HandleRegister(){
   navigation.navigate("Register")
 }
@@ -13,10 +16,37 @@ function HandleRegister(){
   function HandlePassword(){
     navigation.navigate("ForgotPassword")
   }
-  function HandlesignIn(){
+  async function HandlesignIn(data){
+    try{
+      var apiData=await GetUsers()
+    }catch(error){
+      setColor("red")
+      setText("error con la busqueda de usuarios"+error)
+    }
+
+var referencePassword=data.Password
+var referenceUser=data.User
+console.log(apiData)
+var filtro=apiData.filter(({username,name,password,role,reservedword})=>{return password==referencePassword && username==referenceUser})
+if (filtro[0]){
+  setColor("green")
+  setText("inicio de sesion exitosa")
+  if (filtro[0].role == 1){
     navigation.navigate("CreateCar")
   }
-    const [Password,setPassword]=useState(true)
+  else{
+    navigation.navigate("Rent")
+  }
+
+}
+else{
+  setColor("red")
+  setText("el usuario no existe o la contraseña es incorrecta")
+}
+
+
+  }
+    const [Password,setPassword]=useState(false)
     const {
         control,
         handleSubmit,
@@ -62,7 +92,7 @@ return(
  {errors.User?.type == "required" && (
         <Text style={{ color: "red" }}>Debes ingresar tu Usuario</Text>
       )}
-       {errors.User?.type == "Pattern" && (
+       {errors.User?.type == "pattern" && (
         <Text style={{ color: "red" }}>Debes ingresar un nombre valido solo letras</Text>
       )}
 
@@ -101,6 +131,7 @@ return(
         <Text style={{ color: "red" }}>tu contraseña debe tener almenos un signo especial
         </Text>
       )}
+            <Text style={{color:`${color}`,fontSize:"10px"}}>{text}</Text>
       <View style={styles.containerButtons}>
       <Button
           label="SignIn"

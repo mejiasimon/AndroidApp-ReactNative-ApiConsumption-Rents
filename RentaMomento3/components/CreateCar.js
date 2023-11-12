@@ -4,17 +4,73 @@ import { View,Image } from "react-native";
 import {Controller,useForm}from "react-hook-form"
 import { styles } from "../styles/styles";
 import { useState } from "react";
+import { PostCar } from "../services/PostCar";
+import { GetCars } from "../services/GetCars";
+import { PutCar } from "../services/PutCar";
 export function CreateCar ({navigation}){
-  function HandleListVehicle(){
-
+  async function HandleListVehicle(){
+navigation.navigate("ListCars")
   }
-    function HandleStoreVehicle(){
+    async function HandleStoreVehicle(data){
+      let referenceplatenumber=data.PlateNumber
+      let referencebrand=data.Brand
+      let referencestate=parseInt(data.State)
+      let referencedailyvalue=parseInt(data.DailyValue)
+      try {
+        var apiData=await GetCars()
+      } catch (error) {
+        setColor("red")
+        setText("hay un error con la busqueda "+error)
+      }
+      let filtro=apiData.filter(({platenumber,brand,state,dailyvalue})=>{return platenumber==referenceplatenumber})
+      if(!filtro[0]){
+        try {
+          await PostCar(referenceplatenumber,referencebrand,referencestate,referencedailyvalue)
+          setColor("green")
+          setText("vehiculo guardado con exito")
+        } catch (error) {
+          setColor("red")
+          setText("hay un error con la busqueda "+error)
+        }
+      }else{
+        setColor("red")
+        setText("ya hay un vehiculo con esa placa no es posible crearlo")
+      }
+     
         
     }
-    function HandleUpdateVehicle(){
+    async function HandleUpdateVehicle(data){
+      var referenceplatenumber=data.PlateNumber
+      var referencebrand=data.Brand
+      var referencestate=parseInt(data.State)
+      var referencedailyvalue=parseInt(data.DailyValue)
 
+      try {
+        var apiData=await GetCars()
+        setColor("green")
+        setText("vehiculo actualizado con exito")
+      } catch (error) {
+        setColor("red")
+        setText("hay un error con la busqueda "+error)
+      }
+      var filtro=apiData.filter(({platenumber,brand,state,dailyvalue})=>{return platenumber==referenceplatenumber})
+      console.log(filtro[0])
+      var id=filtro[0]._id
+      if(filtro[0]){
+        try {
+          await PutCar(id,referenceplatenumber,referencebrand,referencestate,referencedailyvalue)
+        } catch (error) {
+          setColor("red")
+        setText("Error al actualizar el vehiculo "+error)
+        }
+        
+      }else{
+        setColor("red")
+        setText("Ese vehiculo no existe por lo que no se puede actualizar")
+      }
     }
     function HandleDeleteVehicle(){
+      navigation.navigate("Delete")
 
     }
     const {
@@ -30,6 +86,8 @@ export function CreateCar ({navigation}){
           DailyValue:""
         },
       });
+      const[color,setColor]=useState("")
+      const[text,setText]=useState("")
       return(
         <View style={styles.container} >
   <Image 
@@ -140,6 +198,7 @@ export function CreateCar ({navigation}){
        {errors.DailyValue?.type =="pattern" && (
         <Text style={{ color: "red" }}>solo se aceptan numeros</Text>
       )}
+      <Text style={{color:`${color}`,fontSize:"10px"}}>{text}</Text>
       <View style={styles.containerButtons}>
       <Button
           label="Store vehicle"
@@ -149,7 +208,7 @@ export function CreateCar ({navigation}){
          <Button
           label="Register"
           style={styles.button}
-          onPress={HandleUpdateVehicle}
+          onPress={handleSubmit(HandleUpdateVehicle)}
         >Update</Button>
       </View>
       <View style={styles.containerButtons}>

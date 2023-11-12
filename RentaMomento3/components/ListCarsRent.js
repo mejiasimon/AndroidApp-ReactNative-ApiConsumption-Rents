@@ -7,15 +7,16 @@ import { useState } from "react";
 import { FilterOutlined } from "@mui/icons-material";
 import { GetCars } from "../services/GetCars";
 import { useEffect } from "react";
-export function ListCars({navigation}){
+export function ListCarsRent({navigation}){
 const [data,setdata]=useState("")
     function handleBack(){
-        navigation.navigate("CreateCar")
+        navigation.navigate("Rent")
     }
 async function fetchdata(){
     try {
         let datos=await GetCars()
-        setdata(datos)
+        let filtro=datos.filter(({platenumber,brand,state,dailyvalue})=>{return state==1})
+        setdata(filtro)
     }catch(error){
 console.log(error)
     }
