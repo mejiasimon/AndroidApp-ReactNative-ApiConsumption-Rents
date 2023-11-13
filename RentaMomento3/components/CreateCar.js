@@ -8,6 +8,9 @@ import { PostCar } from "../services/PostCar";
 import { GetCars } from "../services/GetCars";
 import { PutCar } from "../services/PutCar";
 export function CreateCar ({navigation}){
+  function HandleReturnVehicles(){
+        navigation.navigate("ReturnCar")
+  }
   async function HandleListVehicle(){
 navigation.navigate("ListCars")
   }
@@ -225,6 +228,11 @@ navigation.navigate("ListCars")
 
 
       </View>
+      <Button
+          label="Return Vehicles"
+          style={styles.button}
+          onPress={HandleReturnVehicles}
+        >Return Vehicles</Button>
   
 </View>
       )
